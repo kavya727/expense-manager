@@ -1,0 +1,4 @@
+{
+  "db": "mongodb://localhost/expense_manager",
+  "port": "3900"
+}

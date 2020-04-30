@@ -21,7 +21,7 @@ class MonthsList extends Component {
             <div
               key={index}
               className={cn(
-                item.id === activeExpense.id ? activeClass : "",
+                item._id === activeExpense._id ? activeClass : "",
                 "months-box"
               )}
               onClick={() => this.props.getActiveMonthlyExpense(item)}

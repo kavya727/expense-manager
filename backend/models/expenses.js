@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+mongoose.set("useFindAndModify", false);
 
 const Expenses = mongoose.model(
   "Expenses",
@@ -9,7 +10,7 @@ const Expenses = mongoose.model(
       {
         itemid: String,
         category: String,
-        category: String,
+        categoryID: String,
         amount: Number,
         iconClass: String
       }

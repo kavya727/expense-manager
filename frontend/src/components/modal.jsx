@@ -5,16 +5,6 @@ class Modal extends Component {
   constructor(props) {
     super(props);
     this.state = {};
-    this.categoryList = [
-      { categoryID: "", category: "Select" },
-      { categoryID: "FL", category: "Food" },
-      { categoryID: "SH", category: "Shopping" },
-      { categoryID: "TS", category: "Transport" },
-      { categoryID: "HL", category: "HealthCare" },
-      { categoryID: "HS", category: "Housing" },
-      { categoryID: "LP", category: "Loan Payment" },
-      { categoryID: "OTR", category: "Others" }
-    ];
     this.selectedOptions = {
       year: "",
       month: "",
@@ -23,8 +13,22 @@ class Modal extends Component {
     };
   }
 
+  componentWillMount() {
+    this.selectedOptions = {
+      year: this.props.activeExpense.year,
+      month: this.props.activeExpense.month,
+      categoryID: this.props.editExpenseItem.categoryID,
+      amount: this.props.editExpenseItem.amount
+    };
+  }
+
   getModalBody = () => {
-    const { activeExpense, editExpenseItem, editExpenseFlag } = this.props;
+    const {
+      activeExpense,
+      editExpenseItem,
+      editExpenseFlag,
+      categoryList
+    } = this.props;
     const yearsList = this.getYearsList();
     return (
       <>
@@ -69,9 +73,9 @@ class Modal extends Component {
           <select
             id="categoryDDL"
             onChange={e => this.handleChange(e, "categoryID")}
-            defaultValue={editExpenseFlag && editExpenseItem.categoryId}
+            defaultValue={editExpenseFlag && editExpenseItem.categoryID}
           >
-            {this.categoryList.map(item => (
+            {categoryList.map(item => (
               <option
                 className="select-options"
                 key={item.categoryID}
@@ -143,7 +147,7 @@ class Modal extends Component {
   render() {
     const { header, footer, editExpenseItem } = this.props;
 
-    console.log(editExpenseItem);
+    console.log("edit expense", editExpenseItem);
     return (
       <>
         <div className="modal">

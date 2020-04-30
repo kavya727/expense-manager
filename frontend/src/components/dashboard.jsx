@@ -1,10 +1,16 @@
 import React, { Component } from "react";
 import orderBy from "lodash/orderBy";
 import get from "lodash/get";
+import filter from "lodash/filter";
 import Months from "./monthsList";
 import ExpenseList from "./expenseList";
 import Modal from "./modal";
-import { getExpenses } from "../services/expensesService";
+import {
+  getExpenses,
+  getCategoryList,
+  updateExpenseList,
+  deleteExpenses
+} from "../services/expensesService";
 import "../App.scss";
 
 class Dashboard extends Component {
@@ -22,12 +28,13 @@ class Dashboard extends Component {
 
   async componentWillMount() {
     this.expenseList = await getExpenses();
-    console.log("response", this.expenseList.data);
+    const categoryList = await getCategoryList();
     const expenseList = orderBy(this.expenseList.data, "month", "desc");
     this.setState({
       expenseList,
       activeExpense: expenseList[0],
-      activeClass: "active-month"
+      activeClass: "active-month",
+      categoryList: categoryList.data
     });
   }
   addExpense = () => {
@@ -39,13 +46,45 @@ class Dashboard extends Component {
     };
     this.setState({ showModal: true });
   };
-  submitExpense = payload => {
-    console.log(payload);
-    this.setState({
-      editExpenseItem: {},
-      editExpenseFlag: false,
-      showModal: false
+
+  submitExpense = async payload => {
+    console.log("req", payload);
+    let result = {};
+    let reqPayload;
+    const items = [];
+    const selectedCategory = filter(this.state.categoryList, option => {
+      return option.categoryID === payload.categoryID;
     });
+    items.push({
+      _id: this.state.editExpenseFlag ? this.state.editExpenseItem._id : null,
+      itemid: this.state.editExpenseFlag
+        ? `${payload.categoryID}${this.state.editExpenseItem.itemid.slice(2)}`
+        : `${payload.categoryID}${this.state.activeExpense.items.length + 1}`,
+      amount: payload.amount,
+      category: selectedCategory[0].category,
+      iconClass: selectedCategory[0].iconClass,
+      categoryID: selectedCategory[0].categoryID
+    });
+    reqPayload = {
+      _id: this.state.activeExpense._id,
+      items
+    };
+    if (reqPayload) {
+      console.log("reqpayload", reqPayload);
+      result = await updateExpenseList(reqPayload);
+      console.log("result", result);
+    }
+    this.expenseList = await getExpenses();
+    const expenseList = orderBy(this.expenseList.data, "month", "desc");
+    if (result) {
+      this.setState({
+        editExpenseItem: {},
+        editExpenseFlag: false,
+        showModal: false,
+        activeExpense: result.data,
+        expenseList
+      });
+    }
   };
 
   closeModal = () => {
@@ -56,8 +95,24 @@ class Dashboard extends Component {
     });
   };
 
-  deleteExpense = item => {
-    console.log(item);
+  deleteExpense = async item => {
+    console.log("delete", item);
+    const req = {
+      _id: this.state.activeExpense._id,
+      items: { _id: item._id }
+    };
+    console.log("delete req", req);
+    const result = await deleteExpenses(req);
+    if (result.data) {
+      this.expenseList = await getExpenses();
+      const expenseList = orderBy(this.expenseList.data, "month", "desc");
+      if (result) {
+        this.setState({
+          expenseList,
+          activeExpense: result.data
+        });
+      }
+    }
   };
 
   editExpense = item => {
@@ -125,6 +180,7 @@ class Dashboard extends Component {
                     editExpenseItem={this.state.editExpenseItem}
                     activeExpense={this.state.activeExpense}
                     editExpenseFlag={this.state.editExpenseFlag}
+                    categoryList={this.state.categoryList}
                   />
                 ) : null}
               </>

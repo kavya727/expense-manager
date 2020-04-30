@@ -25,7 +25,7 @@ class ExpenseList extends Component {
                 {item.category}
               </td>
               <td key={`expense-price+${index}`} className="expense-price">
-                ${item.price}
+                ${item.amount}
               </td>
               <td
                 key={`edit-expense-icon+${index}`}

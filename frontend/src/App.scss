@@ -137,3 +137,19 @@
     }
   }
 }
+
+.reportContainer {
+  display: flex;
+  flex-direction: column;
+  .header-text {
+    display: flex;
+    margin: 25% 0 10% 0;
+    color: #ff9800;
+  }
+  .svg-class {
+    display: flex;
+    .rect-class {
+      display: flex;
+    }
+  }
+}

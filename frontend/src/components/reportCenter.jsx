@@ -6,7 +6,7 @@ import { getExpenses } from "../services/expensesService";
 class Reports extends Component {
   state = {};
 
-  async componentWillMount() {
+  async componentDidMount() {
     this.activeExpense = this.props.location.state.activeExpense;
     console.log("props", this.activeExpense);
     this.setState({
@@ -15,12 +15,12 @@ class Reports extends Component {
   }
   getGrapgh = data => {
     const svg = select("svg");
-    if (svg) {
-      const width = +svg.attr("width");
-      const height = +svg.attr("height");
-
-      //   const xValue = d => d.amount;
-      //   const yValue = d => d.category;
+    if (svg && data) {
+      const width = "960"; // +svg.attr("width");
+      const height = "50"; // +svg.attr("height");
+      data.forEach((item, index) => {
+        item.index = index * height;
+      });
 
       console.log("data", data);
       const xScale = scaleLinear()
@@ -31,25 +31,33 @@ class Reports extends Component {
         .domain([data.map(d => d.category)])
         .range([0, height]);
 
+      console.log(yScale.range());
+
       svg
         .selectAll("rect")
         .data(data)
         .enter()
         .append("rect")
-        .attr("y", d => yScale(d.category))
         .attr("width", d => xScale(d.amount))
-        .attr("height", yScale.bandwidth());
+        .attr("height", yScale.bandwidth())
+        .attr("y", d => d.index)
+        .attr("fill", "#8c8787")
+        .attr("className", "rect-class");
+
+      console.log("y", yScale("Housing"));
     }
   };
 
   render() {
     return (
       <>
-        <h1>Report Center</h1>
-        <svg width="960" height="500"></svg>
-        {/* {this.state.activeExpense
-          ? this.getGrapgh(this.state.activeExpense.items)
-          : null} */}
+        <div className="reportContainer">
+          <h1 className="header-text">Report Center</h1>
+          <svg width="960" height="500" className="svg-class"></svg>
+          {this.state.activeExpense
+            ? this.getGrapgh(this.state.activeExpense.items)
+            : null}
+        </div>
       </>
     );
   }

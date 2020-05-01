@@ -54,6 +54,14 @@
     font-family: sans-serif;
     font-size: 60px;
   }
+  .reportLink {
+    display: flex;
+    font-family: sans-serif;
+    font-size: 20px;
+    color: #8a7c7c;
+    justify-content: flex-end;
+    margin-right: 10%;
+  }
 
   .expenses-table {
     display: flex;

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import orderBy from "lodash/orderBy";
 import get from "lodash/get";
 import filter from "lodash/filter";
@@ -160,6 +161,17 @@ class Dashboard extends Component {
                   activeClass={this.state.activeClass}
                   activeExpense={this.state.activeExpense}
                 />
+                <Link
+                  className="reportLink"
+                  to={{
+                    pathname: "/expense-report",
+                    state: {
+                      activeExpense: this.state.activeExpense
+                    }
+                  }}
+                >
+                  Report Center
+                </Link>
                 <ExpenseList
                   activeExpense={this.state.activeExpense}
                   editExpense={this.editExpense}
